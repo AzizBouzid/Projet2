@@ -2,7 +2,6 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-#retour du lien url
 
 input_url = 'https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html'
 def book_data(input_url):
@@ -40,7 +39,6 @@ def book_data(input_url):
 
 # Création du fichier cvs
 
-
     retour_book = [
         url,
         retour_Upc.text,
@@ -55,11 +53,10 @@ def book_data(input_url):
     ]
     return retour_book
 
-
         
 if __name__ == "__main__":
-    url = 'https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html'
-    retour_book = book_data(url)
+    
+    retour_book = book_data(input_url)
 
     en_tete = [
         'product_page_url',
@@ -75,7 +72,7 @@ if __name__ == "__main__":
         ]
  
 
-    with open('book.csv', 'w') as fichier_csv:
+    with open('books.csv', 'w') as fichier_csv:
         writer = csv.writer(fichier_csv, delimiter=',')
         writer.writerow(en_tete)
         writer.writerow(retour_book)

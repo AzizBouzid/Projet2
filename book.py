@@ -2,9 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 
-#retour du lien url
-url = input('Entrez votre lien: ')
-#url = 'https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html'
+
+#url = input('Entrez votre lien: ')
+url = 'https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html'
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 # print(soup)
