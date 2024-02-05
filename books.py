@@ -1,9 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
+import urllib
+import os
+from genericpath import exists
 
-
-input_url = 'https://books.toscrape.com/catalogue/libertarianism-for-beginners_982/index.html'
+input_url = 'https://books.toscrape.com/catalogue/full-moon-over-noahs-ark-an-odyssey-to-mount-ararat-and-beyond_811/index.html'
 def book_data(input_url):
     url = input_url
     response = requests.get(url)
@@ -37,6 +39,12 @@ def book_data(input_url):
 # Retour du lien de l'image
     retour_Image = soup.select_one('img')['src'].replace("../..", "https://books.toscrape.com")
 
+# Retour Titre image
+    titre = soup.find('h1').text
+    if not exists('Image'):
+        repertoire_image = os.mkdir('Image')
+    retour_photo = urllib.request.urlretrieve(retour_Image, f"{'Image'}/{titre}.jpg")
+    
 # Création du fichier cvs
 
     retour_book = [
@@ -49,7 +57,8 @@ def book_data(input_url):
         retour_Description.text,
         retour_Category.text,
         retour_Rating.text,
-        retour_Image
+        retour_Image,
+        retour_photo
     ]
     return retour_book
 
@@ -76,4 +85,4 @@ if __name__ == "__main__":
         writer = csv.writer(fichier_csv, delimiter=',')
         writer.writerow(en_tete)
         writer.writerow(retour_book)
-    
+     
