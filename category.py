@@ -31,7 +31,7 @@ page_url = soup.find(class_='nav-list').find_next('li').text.replace(" ", "").sp
 lien_books = []
 books = soup.find_all('article', class_='product_pod')
 x=0
-while x < 3:
+while x < len(liste_url_categorie)::
     url_cat = liste_url_categorie[x]
     while page_suivante(soup):
     
