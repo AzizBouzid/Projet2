@@ -30,50 +30,53 @@ print(len(liste_url_categorie))
 page_url = soup.find(class_='nav-list').find_next('li').text.replace(" ", "").split()
 lien_books = []
 books = soup.find_all('article', class_='product_pod')
-i = 2
-url_cat = liste_url_categorie[i]
-while page_suivante(soup):
-   
-        response = requests.get(url_cat)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        page_url = soup.find(class_='nav-list').find_next('li').text.replace(" ", "").split()
-        books = soup.find_all('article', class_='product_pod')
-        
-        for book in books:       
-            url_book = book.find('h3').a
-            lien_books.append(url + "catalogue" + "/"  + url_book['href'].strip("../"))
+x=0
+while x < 3:
+    url_cat = liste_url_categorie[x]
+    while page_suivante(soup):
+    
+            response = requests.get(url_cat)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            page_url = soup.find(class_='nav-list').find_next('li').text.replace(" ", "").split()
+            books = soup.find_all('article', class_='product_pod')
             
-        if soup.find('li', class_='next'):
-            url_cat = liste_url_categorie[i]
-            test = soup.find('li', class_='next').find('a').get('href')
-            
-            url_cat = url_cat.rstrip('index.html')
-            
-            url_cat = url_cat + test
+            for book in books:       
+                url_book = book.find('h3').a
+                lien_books.append(url + "catalogue" + "/"  + url_book['href'].strip("../"))
+                
+            if soup.find('li', class_='next'):
+                url_cat = liste_url_categorie[x]
+                test = soup.find('li', class_='next').find('a').get('href')
+                
+                url_cat = url_cat.rstrip('index.html')
+                
+                url_cat = url_cat + test
 
 
-en_tete = [
-    'product_page_url',
-    'universal_product_code',
-    'title',
-    'price_including_tax',
-    'price_excluding_tax',
-    'number_available',
-    'product_description',
-    'category',
-    'review_rating',
-    'image_url'
-    ]
-nom_fichier = list_categories[i]
-nom_repertoire = os.mkdir(list_categories[i])
-i = 0
-while i < len(lien_books):
+    en_tete = [
+        'product_page_url',
+        'universal_product_code',
+        'title',
+        'price_including_tax',
+        'price_excluding_tax',
+        'number_available',
+        'product_description',
+        'category',
+        'review_rating',
+        'image_url'
+        ]
+    nom_fichier = list_categories[x]
+    repertoire = os.mkdir(list_categories[x])
+    print("Traitement en cours de la catégorie: " + list_categories[x] )
 
-    retour_book = book_data(lien_books[i])
-    print(retour_book)
-    fichier = f"{nom_fichier}/{nom_fichier}.csv"
-    with open(fichier, 'a') as fichier_csv:
-        writer = csv.writer(fichier_csv, delimiter=',')
-        writer.writerow(en_tete)
-        writer.writerow(retour_book)
-    i+=1
+    i = 0
+    while i < len(lien_books):
+
+        retour_book = book_data(lien_books[i])
+        fichier = f"{nom_fichier}/{nom_fichier}.csv"
+        with open(fichier, 'a') as fichier_csv:
+            writer = csv.writer(fichier_csv, delimiter=',')
+            writer.writerow(en_tete)
+            writer.writerow(retour_book)   
+        i+=1
+    x+=1
