@@ -1,22 +1,27 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-import urllib
-import os
-from genericpath import exists
+from PIL import Image
+from io import BytesIO
 
-input_url = 'https://books.toscrape.com/catalogue/full-moon-over-noahs-ark-an-odyssey-to-mount-ararat-and-beyond_811/index.html'
-def book_data(input_url):
+directory = 'Images'
+input_url = 'https://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html'
+def book_data(input_url, directory):
     url = input_url
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
-# print(soup)
+
 
 # Retour la valeur upc
     retour_Upc = soup.find('th', string='UPC').find_next('td')
        
 # Retour du Titre
     retour_Title = soup.find('h1')
+    image_Title = soup.find('h1').text\
+        .replace("'","").replace("\\","").replace(",","").replace("-","_")\
+	    .replace(":","").replace("?","").replace(")","").replace(".","")\
+        .replace("(","").replace("*","").replace("!","").replace("#","")\
+		.replace(" ","_").replace("&","").replace("/","_").replace("\"","_")
     
 # Retour du prix en TTC
     retour_TTC = soup.find('th', string='Price (incl. tax)').find_next('td')
@@ -38,13 +43,14 @@ def book_data(input_url):
 
 # Retour du lien de l'image
     retour_Image = soup.select_one('img')['src'].replace("../..", "https://books.toscrape.com")
-
-# Retour Titre image
-    titre = soup.find('h1').text
-    if not exists('Image'):
-        repertoire_image = os.mkdir('Image')
-    retour_photo = urllib.request.urlretrieve(retour_Image, f"{'Image'}/{titre}.jpg")
+    Image2Save = requests.get(retour_Image)
+    image = Image.open(BytesIO(Image2Save.content))
+    image_png = f"{directory}/{image_Title}.jpeg"
+    image.save(image_png, "JPEG")
+    image.close
+    image_png = f"{image_Title}.jpeg"
     
+
 # Création du fichier cvs
 
     retour_book = [
@@ -54,18 +60,18 @@ def book_data(input_url):
         retour_TTC.text,
         retour_HT.text,
         retour_Available.text,
-        retour_Description.text,
+        retour_Description.text.replace('"',"'").replace(";", ","),
         retour_Category.text,
         retour_Rating.text,
-        retour_Image,
-        retour_photo
+        image_png
     ]
+    
     return retour_book
 
         
 if __name__ == "__main__":
     
-    retour_book = book_data(input_url)
+    retour_book = book_data(input_url, directory)
 
     en_tete = [
         'product_page_url',
@@ -85,4 +91,3 @@ if __name__ == "__main__":
         writer = csv.writer(fichier_csv, delimiter=',')
         writer.writerow(en_tete)
         writer.writerow(retour_book)
-     
