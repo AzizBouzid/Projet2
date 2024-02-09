@@ -1,8 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-from PIL import Image
-from io import BytesIO
+import urllib
 
 directory = 'Images'
 input_url = 'https://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html'
@@ -33,7 +32,7 @@ def book_data(input_url, directory):
     retour_Available = soup.find('th', string='Availability').find_next('td')
 
 # Retour de la description
-    retour_Description = soup.find('h2').find_next()
+    retour_Description = soup.find('h2').find_next().text.replace('"',"'").replace(";", ",")
 
 # Retoure de la catégorie
     retour_Category = soup.find('li', class_='active').find_previous('a')
@@ -42,13 +41,12 @@ def book_data(input_url, directory):
     retour_Rating = soup.find('th', string='Number of reviews').find_next('td')
 
 # Retour du lien de l'image
-    retour_Image = soup.select_one('img')['src'].replace("../..", "https://books.toscrape.com")
-    Image2Save = requests.get(retour_Image)
-    image = Image.open(BytesIO(Image2Save.content))
-    image_png = f"{directory}/{image_Title}.jpeg"
-    image.save(image_png, "JPEG")
-    image.close
-    image_png = f"{image_Title}.jpeg"
+    retour_lien_image = soup.select_one('img')['src'].replace("../..", "https://books.toscrape.com")
+    
+# Retour Image
+    image_JPEG = f"{directory}/{image_Title}.jpeg"
+    retour_Image = urllib.request.urlretrieve(retour_lien_image, image_JPEG)
+    
     
 
 # Création du fichier cvs
@@ -60,10 +58,10 @@ def book_data(input_url, directory):
         retour_TTC.text,
         retour_HT.text,
         retour_Available.text,
-        retour_Description.text.replace('"',"'").replace(";", ","),
+        retour_Description,
         retour_Category.text,
         retour_Rating.text,
-        image_png
+        retour_Image
     ]
     
     return retour_book
