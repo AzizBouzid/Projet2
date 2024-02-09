@@ -11,7 +11,6 @@ def page_suivante(soup):
     if soup.find('li', class_='next'):
         return True
 
-
 url = 'https://books.toscrape.com/'
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
@@ -29,9 +28,6 @@ for lien_categorie in lien:
     total_categorie = url + lien_categorie.get('href')
     liste_url_categorie.append(total_categorie)
 del (liste_url_categorie[0])
-
-
-
 
 # Enregistre les données de chaque livre de la catégorie dans un fichier csv
 # Enregistre les images des livres de chaque catégorie
@@ -82,8 +78,7 @@ while x < len(liste_url_categorie):
     print("Nombre des livres: " + str(len(lien_books)))
 
     i = 0
-    fichier = f"{nom_fichier}/{nom_fichier}.csv"
-    
+    fichier = f"{nom_fichier}/{nom_fichier}.csv"    
     
     with open(fichier, 'a', encoding='UTF-8') as fichier_csv:
         writer = csv.writer(fichier_csv, delimiter=';', quoting=csv.QUOTE_ALL)
