@@ -2,14 +2,16 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import urllib
+import os
+from genericpath import exists
 
-directory = 'Images'
+directory = 'categorie'
 input_url = 'https://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html'
+
 def book_data(input_url, directory):
     url = input_url
     response = requests.get(url)
     soup = BeautifulSoup(response.content, 'html.parser')
-
 
 # Retour la valeur upc
     retour_Upc = soup.find('th', string='UPC').find_next('td')
@@ -44,13 +46,13 @@ def book_data(input_url, directory):
     retour_lien_image = soup.select_one('img')['src'].replace("../..", "https://books.toscrape.com")
     
 # Retour Image
-    image_JPEG = f"{directory}/{image_Title}.jpeg"
+    if not exists(f"{directory}/{'Images'}"):
+        repertoire = os.mkdir(f"{directory}/{'Images'}")
+
+    image_JPEG = f"{directory}/{'Images'}/{image_Title}.jpeg"
     retour_Image = urllib.request.urlretrieve(retour_lien_image, image_JPEG)
     
-    
-
 # Création du fichier cvs
-
     retour_book = [
         url,
         retour_Upc.text,
@@ -65,7 +67,6 @@ def book_data(input_url, directory):
     ]
     
     return retour_book
-
         
 if __name__ == "__main__":
     
@@ -84,7 +85,6 @@ if __name__ == "__main__":
         'image_url'
         ]
  
-
     with open('books.csv', 'w') as fichier_csv:
         writer = csv.writer(fichier_csv, delimiter=',')
         writer.writerow(en_tete)
