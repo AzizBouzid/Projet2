@@ -6,10 +6,6 @@ import os
 from genericpath import exists
 
 # Si la page contient next la fonction retourne vrai
-def page_suivante(soup):
-
-    if soup.find('li', class_='next'):
-        return True
 
 url = 'https://books.toscrape.com/'
 response = requests.get(url)
@@ -39,14 +35,12 @@ while x < len(liste_url_categorie):
     while True:
         response = requests.get(url_categorie)
         soup = BeautifulSoup(response.content, 'html.parser')
-        page_url = soup.find(class_='nav-list').find_next('li').text.replace(" ", "").split()
         books = soup.find_all('article', class_='product_pod')
 
         # Enregistre les liens des livres de la catégorie
         for book in books:
             url_book = book.find('h3').a
-            lien_books.append(url + "catalogue" + "/" +
-                              url_book['href'].strip("../"))
+            lien_books.append(url + "catalogue" + "/" + url_book['href'].strip("../"))
 
         if soup.find('li', class_='next'):
             url_categorie = liste_url_categorie[x]
@@ -90,3 +84,8 @@ while x < len(liste_url_categorie):
             i += 1
             
     x += 1
+    
+def page_suivante(soup):
+
+    if soup.find('li', class_='next'):
+        return True
