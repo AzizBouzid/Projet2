@@ -5,7 +5,6 @@ import csv
 import os
 from genericpath import exists
 
-# Si la page contient next la fonction retourne vrai
 
 url = 'https://books.toscrape.com/'
 response = requests.get(url)
@@ -50,7 +49,7 @@ while x < len(liste_url_categorie):
             
         else:
             break
-   
+            
     en_tete = [
         'product_page_url',
         'universal_product_code',
@@ -86,6 +85,6 @@ while x < len(liste_url_categorie):
     x += 1
     
 def page_suivante(soup):
-
+    # Si la page contient next la fonction retourne vrai
     if soup.find('li', class_='next'):
         return True
