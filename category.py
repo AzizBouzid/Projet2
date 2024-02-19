@@ -83,8 +83,3 @@ while x < len(liste_url_categorie):
             i += 1
             
     x += 1
-    
-def page_suivante(soup):
-    # Si la page contient next la fonction retourne vrai
-    if soup.find('li', class_='next'):
-        return True

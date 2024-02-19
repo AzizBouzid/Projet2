@@ -19,10 +19,9 @@ def book_data(input_url, directory):
 # Retour du Titre
     retour_Title = soup.find('h1')
     image_Title = soup.find('h1').text\
-        .replace("'","").replace("\\","").replace(",","").replace("-","_")\
-	    .replace(":","").replace("?","").replace(")","").replace(".","")\
-        .replace("(","").replace("*","").replace("!","").replace("#","")\
-		.replace(" ","_").replace("&","").replace("/","_").replace("\"","_")
+        .replace(")","").replace("(","").replace("#","").replace(".","")\
+        .replace(":","").replace(",","").replace("/","_").replace("'","")\
+        .replace("\"","_").replace("*","").replace("?","")
     
 # Retour du prix en TTC
     retour_TTC = soup.find('th', string='Price (incl. tax)').find_next('td')
